@@ -816,16 +816,21 @@ Systems such as [Consul](https://www.consul.io/docs/index.html), [Etcd](https://
   <i><a href=https://www.youtube.com/watch?v=kKjm4ehYiMs>Source: Scaling up to your first 10 million users</a></i>
 </p>
 
+**Relational database**: Strictly enforce relationships between things stored in the database. 보통 정형화된 데이터에 많이 쓰임 (data length가 같고 모든 데이터 포인트들이 동일한 entity field를 가짐). relational database는 database querying language (SQL, structured query language)를 지원함. 그래서 SQL database라고 보통 부름. SQL database는 non-SQL 보다 더 복잡한 query function을 지원함. 
+
+**Non-Relational database**: flexible data structure. Data is typically presented as key-value pairs. NoSQL database라고 불림. 빠르고 key-value pair 저장에 좋음. non-structured data저장에 쓰임. 
+
+
 ### Relational database management system (RDBMS)
 
 A relational database like SQL is a collection of data items organized in tables.
 
 **ACID** is a set of properties of relational database [transactions](https://en.wikipedia.org/wiki/Database_transaction).
 
-* **Atomicity** - Each transaction is all or nothing
-* **Consistency** - Any transaction will bring the database from one valid state to another
-* **Isolation** - Executing transactions concurrently has the same results as if the transactions were executed serially
-* **Durability** - Once a transaction has been committed, it will remain so
+* **Atomicity** - Each transaction is all or nothing. 만약 single transaction이 more than one operation으로 이루어 져 있을 경우, 그 중 하나라도 실패하면, 전체가 실패해야 한다. 이로써, transaction이 성공했다면, 이것이 끝날 때, 사용자는 모든 sub-operation이 성공했다는것을 알 수 있게 됨. 
+* **Consistency** - Any transaction will bring the database from one valid state to another. database는 항상 정해진 룰에 대해서 valid해야 한다. Consistency can be thought of as the following:  every "read" operation receives the most recent "write" operation results.
+* **Isolation** - Executing transactions concurrently has the same results as if the transactions were executed serially.
+* **Durability** - Once a transaction has been committed, it will remain so.
 
 There are many techniques to scale a relational database: **master-slave replication**, **master-master replication**, **federation**, **sharding**, **denormalization**, and **SQL tuning**.
 
@@ -922,6 +927,7 @@ Common ways to shard a table of users is either through the user's last name ini
 * [The coming of the shard](http://highscalability.com/blog/2009/8/6/an-unorthodox-approach-to-database-design-the-coming-of-the.html)
 * [Shard database architecture](https://en.wikipedia.org/wiki/Shard_(database_architecture))
 * [Consistent hashing](http://www.paperplanes.de/2011/12/9/the-magic-of-consistent-hashing.html)
+  * Job request는 hashing을 통해서 특정 서버로 direct 된다. 이때, hashing key는 modulo operation을 사용하여 서버를 찾게 되는데, 서버의 수가 줄어들거나 늘어날 경우, modulo operation by n_servers는 전체의 hashing mapping을 바꾸어 버리게 된다. 만약, 현재 서버가 4개가 있고, 하나가 망가져서 3개가 되었다고 하자. idx_server = hash_key % n_servers에 의하여 n_servers가 4에서 3으로 줄어들게 되면, hash_key 16는 0번째 서버로 가던것이 이제는 1번째 서버로 가게 된다. 이렇게 많은 key들이 이전과 다른 서버로 매칭이 되게 되면, 이전 작업에서 저장해 두었던 cache 데이터들이 다시 재사용될 수 없게 된다. 이전에는 hash_key 16이 0번째 서버로 가서 그곳에서 생성한 cache가 나중에 16이 0번째 서버로 다시 들어오면 사용 될 수 있었지만, 이제는 새로운 서버 가게 되어서 임시정보들이 쓸모없게 되는것. 이런 효과를 최소화 하기 위해서 consistent hashing을 사용하는데, 이것은 새로운 서버가 추가되거나, 기존의 서버가 사라질 경우, 이와같은 효과를 최소한으로 만들게 됨. 기본적인 아이디어는 데이터와 서버 (node)들이 모두 hashed into a circle이 된다는 것이다. 그리고, 특정 데이터가 circle의 특정 위치에 mapping이 되면, 해당 위치에서 시계방향으로 움직이다가 제일 먼저 만나는 node에 할당되게 되는것임. 
 
 #### Denormalization
 
@@ -998,7 +1004,7 @@ NoSQL is a collection of data items represented in a **key-value store**, **docu
 **BASE** is often used to describe the properties of NoSQL databases.  In comparison with the [CAP Theorem](#cap-theorem), BASE chooses availability over consistency.
 
 * **Basically available** - the system guarantees availability.
-* **Soft state** - the state of the system may change over time, even without input.
+* **Soft state** - the state of the system may change over time, even without input. 예들들어, cache expire가 발생하면, state가 바뀔 수 있음. 또는 background job에 의해서도 바뀔 수 있음. 이와같은 차이는 SQL database의 ACID의 durability와 다른점인데, nonSQL은 memory에 저장되어 cache에 사용될 수 있다는 점에서 차이가 나는 것 같음 (nonSQL도 HDD에 저장 될 수 있음).
 * **Eventual consistency** - the system will become consistent over a period of time, given that the system doesn't receive input during that period.
 
 In addition to choosing between [SQL or NoSQL](#sql-or-nosql), it is helpful to understand which type of NoSQL database best fits your use case(s).  We'll review **key-value stores**, **document stores**, **wide column stores**, and **graph databases** in the next section.
