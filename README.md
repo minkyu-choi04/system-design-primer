@@ -822,6 +822,13 @@ Systems such as [Consul](https://www.consul.io/docs/index.html), [Etcd](https://
 
 아래 replication 방법으로 나온 sharding / federation / master-slave replication / master-master replication은 모두 SQL / NonSQL에 적용 가능한것같음. 왜 이게 relational database (SQL)의 하위에 적혀있는지 잘 모르겠음.  
 
+**Scalability**
+Data splitting (sharding / federation) and Data replication (master-slave replication / master-master replication)은 서로 비슷한, 그리고 또 다른 목적을 위해서 사용된다. 
+- Data replication: Availability and Fault Tolerance, read scalability
+- Data splition: Horizontal scale, read and write scalability are both improved
+- Data replication / splittion 모두 load-balancer를 요구함. replicated setting에서는 client의 request를 균등하게 각 node로 분배하는 역할을 하고, 특히 write operation의 경우에는 sync를 맞추는것도 수행해야 함. splitted setting에서는  client의 request가 요구하는 데이터가 어디에 있는지를 기억하고 해당 node로 request를 direct하는 역할을 주로 수행함.
+
+
 ### Relational database management system (RDBMS)
 
 A relational database like SQL is a collection of data items organized in tables.
