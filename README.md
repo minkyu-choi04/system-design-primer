@@ -1455,6 +1455,12 @@ Use TCP over UDP when:
 * You need all of the data to arrive intact
 * You want to automatically make a best estimate use of the network throughput
 
+### Socket
+TCP는 client-server connection을 생성하기는 하는데, 이것이 길게 지속되지는 않음. 하지만, streaming 서비스 같이 client-server connection이 길게 지속되어야 할 경우에는 socket을 사용하여 서로간의 연결을 길게 가져가게 됨. google docs같이 collaborative working이 가능한 application의 경우, 항상 update를 받아와야 함. 그래서  socket stream이 필요. Real-time에 적당함. 
+
+### Polling
+client가 주기적으로 server에 접속해서 update를 받아오는것. 이 둘간에 계속 연결을 하고 지속하는것은 아니고, 일회성 연결을 하고 끊고 하는것의 반복임. 너무 자주 polling을 하게되면 서버에 부담이 감. smaller update gap이 있어도 상관 없을 때 polling을 쓰는것이 좋음. 
+
 ### User datagram protocol (UDP)
 
 <p align="center">
@@ -1591,6 +1597,8 @@ REST is focused on exposing data.  It minimizes the coupling between client/serv
 
 ## Security
 
+* Endpoint protection: Rate limiting. 서버가 처리할 수 있는 request의 상한을 설정하고 그 이상은 처리를 하지 못하게 하는것. Denial of Service (Dos) / Distributed Denial of Service (DDos)를 막는데 도움이 됨. 
+
 This section could use some updates.  Consider [contributing](#contributing)!
 
 Security is a broad topic.  Unless you have considerable experience, a security background, or are applying for a position that requires knowledge of security, you probably won't need to know more than the basics:
@@ -1599,6 +1607,28 @@ Security is a broad topic.  Unless you have considerable experience, a security 
 * Sanitize all user inputs or any input parameters exposed to user to prevent [XSS](https://en.wikipedia.org/wiki/Cross-site_scripting) and [SQL injection](https://en.wikipedia.org/wiki/SQL_injection).
 * Use parameterized queries to prevent SQL injection.
 * Use the principle of [least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege).
+
+## Messaging & Pub-sub
+
+Large-scale and distributed system을 만들 때, sub-module들은 network로 연결이 되어있고, 이 네트워크 연결은 종종 끊어지고 system failure를 만들게 된다. 이것을 방지하기 위해서 publisher-subscriber messaging system을 사용한다. 
+
+https://medium.com/geekculture/system-design-basics-pub-sub-messaging-88dfd98e67b7
+
+Publisher/subscriber messaging, or pub/sub messaging, is a form of asynchronous service-to-service communication used in serverless and microservices architectures. In a pub/sub model, any message published to a topic is immediately received by all of the subscribers to the topic. Pub/sub messaging can be used to enable event-driven architectures, or to decouple applications in order to increase performance, reliability and scalability.
+
+가장 유명하고 잘 쓰이는 messaging system으로는, Request-Response Architecture이 있다. 이것은 client가 request를 서버에 보내면, 서버는 response를 보내주는 방식이다. 문제는 network로 연결된 distributed system이 복잡해져서 여러 단계를 거치게 되면서 나타난다. 하나의 stage에서 messaging에 문제가 생기면, 다른 stage에 문제가 될 수 있음 (no fault tolerant). 
+
+이를 방지하는것이 even-driven architecture이다. 이것에는 크게 세가지 요소가 있는데, producer (publisher) / router (Broker) / consumer (subscriber) 이다. 이 방법은 producer service를 consumer service와 분리를 해서 전체 시스템의 scalability를 올라가게 한다. 
+
+장점: 
+- scalability
+- fault-tolerant
+- deferred or scheduled processing
+
+단점
+- unidirectional communication, no guerantee
+- lack of messaging ordering
+- 
 
 ### Source(s) and further reading
 
