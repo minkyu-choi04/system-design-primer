@@ -820,6 +820,7 @@ Systems such as [Consul](https://www.consul.io/docs/index.html), [Etcd](https://
 
 **Non-Relational database**: flexible data structure. Data is typically presented as key-value pairs. NoSQL database라고 불림. 빠르고 key-value pair 저장에 좋음. non-structured data저장에 쓰임. 
 
+아래 replication 방법으로 나온 sharding / federation / master-slave replication / master-master replication은 모두 SQL / NonSQL에 적용 가능한것같음. 왜 이게 relational database (SQL)의 하위에 적혀있는지 잘 모르겠음.  
 
 ### Relational database management system (RDBMS)
 
@@ -907,6 +908,8 @@ Federation (or functional partitioning) splits up databases by function.  For ex
   <br/>
   <i><a href=http://www.slideshare.net/jboner/scalability-availability-stability-patterns/>Source: Scalability, availability, stability, patterns</a></i>
 </p>
+
+아래 적힌대로, sharding은 데이터베이스를 multiple server에 분산하여 저장하는것을 의미함. vertical column단위로 분산할 수 있고, row 단위로 분산할 수 있음. 이렇게 여러 서버로 분산해두면, 데이터에 대한 접속이 여러 서버로 분산되어서 각 서버가 받는 load를 줄일 수 있어서 scalability에 도움이 됨. parallel processing이 가능한 환경에서는 (서로 다른 부분의 데이터를 읽고 쓴다면), 시간 절약도 가능함. 특정 서버가 다운되어도 해당 서버에 저장된 일부의 데이터만 사용할 수 없을뿐, 다른 부분은 여전히 접속이 가능해서 availability가 증가함. 
 
 Sharding distributes data across different databases such that each database can only manage a subset of the data.  Taking a users database as an example, as the number of users increases, more shards are added to the cluster.
 
@@ -1133,10 +1136,19 @@ Sample data well-suited for NoSQL:
 * Frequently accessed ('hot') tables
 * Metadata/lookup tables
 
+
+##### Database Indexing
+
+database의 크기가 클 경우, 특정 항목을 찾는것은 시간이 오래 걸린다 (O(N)). 이 search time을 줄이기 위해서 indexing을 사용 할 수 있음. 이것은 그냥 Balanced Tree나 hash table을 이용해서 특정한 key-value pair를 search 없이 찾을 수 있도록 만들어 둔것임. SQL, Non-SQL 모두 사용 가능. 
+Cache와 비슷한데, Cache는 key-value pair의 복사본을 저장하는것이고, indexing은 value로의 pointer를 저장한다고 생각하면 될듯. 그래서 database에 업데이트가 생기면, indexing은 그 업데이트를 반영하는데, cache는 반영하지 못할 수 있음.
+
 ##### Source(s) and further reading: SQL or NoSQL
 
 * [Scaling up to your first 10 million users](https://www.youtube.com/watch?v=kKjm4ehYiMs)
 * [SQL vs NoSQL differences](https://www.sitepoint.com/sql-vs-nosql-differences/)
+
+
+
 
 ## Cache
 
