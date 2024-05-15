@@ -729,6 +729,9 @@ Load balancers can also help with horizontal scaling, improving performance and 
 
 ## Reverse proxy (web server)
 
+Reverse proxy는 server를 감싸는 것이고, forward proxy를 client를 감싸는 것이다. 
+reverse proxy에서는 request가 어떤 server로 route되는지 client는 알 수 없고 (routing은 proxy-server 사이에서 이루어 지니까), forward proxy에서는 client에서의 request가 어느 client에서 온건지, server의 response가 어느 client로 가는지 알 수 없음 (client-proxy 사이에서 이루어지니까). 
+
 <p align="center">
   <img src="images/n41Azff.png">
   <br/>
@@ -1399,6 +1402,9 @@ HTTP is an application layer protocol relying on lower-level protocols such as *
 * [Difference between HTTP and TCP](https://www.quora.com/What-is-the-difference-between-HTTP-protocol-and-TCP-protocol)
 * [Difference between PUT and PATCH](https://laracasts.com/discuss/channels/general-discussion/whats-the-differences-between-put-and-patch?page=1)
 
+### Internet Protocol (IP)
+IP를 사용하는 메세지는 packet단위로 전송이 되는데, 이 packet에는 메세지 내용과 source address, target address같은 meta data가 포함된다. packet의 크기는 작아서 메세지를 여러개의 packet으로 나누어서 전송해야 하는데, 이 전송방식은 중간에 데이터가 사라질 수 있고, packet간의 순서도 보존이 되지 않을 수 있다. 
+
 ### Transmission control protocol (TCP)
 
 <p align="center">
@@ -1407,6 +1413,7 @@ HTTP is an application layer protocol relying on lower-level protocols such as *
   <i><a href=http://www.wildbunny.co.uk/blog/2012/10/09/how-to-make-a-multi-player-game-part-1/>Source: How to make a multiplayer game</a></i>
 </p>
 
+TCP는 위에서 언급한 IP를 통한 정보 전송의 한계를 극복하고자 만들어진것임. IP는 connection estabilish가 필요없지만, TCP는 필요함. 
 TCP is a connection-oriented protocol over an [IP network](https://en.wikipedia.org/wiki/Internet_Protocol).  Connection is established and terminated using a [handshake](https://en.wikipedia.org/wiki/Handshaking).  All packets sent are guaranteed to reach the destination in the original order and without corruption through:
 
 * Sequence numbers and [checksum fields](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#Checksum_computation) for each packet
