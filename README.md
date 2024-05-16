@@ -450,12 +450,21 @@ In a distributed computer system, you can only support two of the following guar
 * **Consistency** - Every read receives the most recent write or an error
 * **Availability** - Every request receives a response, without guarantee that it contains the most recent version of the information
 * **Partition Tolerance** - The system continues to operate despite arbitrary partitioning due to network failures
+  - The term "partition" highlights the division or separation of the system into disjoint subsets that cannot communicate.
 
 *Networks aren't reliable, so you'll need to support partition tolerance.  You'll need to make a software tradeoff between consistency and availability.*
 
+모든 시스템에 대해서 fault-tolerance는 무조건 갖춰야 할 사항이라, 이것을 기본으로 넣는것을 가정한다. 이때는 consistency와 availabilty 중 하나를 선택해야 함. 
+- Case 1. Consistency + Partition Tolerance: consistency는 모든 노드가 항상 동일한 데이터를 저장하고 있는 것이다. distributed system에서 consistency를 유지하기 위해서는 몇몇 노드들이 stop responding to read / write request 해야한다. 왜냐하면, 통신되지 못하는 노드들에서는 다른 부분의 시스템에서 생성된 최신 데이터에 접근할 수 없게 되기 때문임. 따라서, consistency를 유지하기 위해서 availability를 포기해야 한다는 것.
+  - Good for financial service
+- Case 2. Availability + Partition Tolerance: Availability는 모든 request에 대해서 response를 받아야 한다는 것이다. 이를 위해서는 노드들이 서로에 상관없이 독립적으로 동작해야 한다. 몇몇 노드들이 partition된 상황에서도 동작을 해야 하기 때문에, 노드들간에 저장된 데이터에 inconsistency가 발생 할 가능성이 존재하여서 consistency가 포기되어야 한다는 것.
+  - Good for social network service, where consistency is not so important, but reponse is important. 
+
+
+
 #### CP - consistency and partition tolerance
 
-Waiting for a response from the partitioned node might result in a timeout error.  CP is a good choice if your business needs require atomic reads and writes.
+Waiting for a response from the partitioned node might result in a timeout error.  CP is a good choice if your business needs require atomic reads and writes. 
 
 #### AP - availability and partition tolerance
 
