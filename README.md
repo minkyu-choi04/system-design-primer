@@ -411,6 +411,8 @@ Then we'll dive into more specific topics such as DNS, CDNs, and load balancers.
 
 ## Performance vs scalability
 
+낮은 work load에서 좋은 performance를 내는 시스템은 scalable 하지 않을 수 있음. Scalable한 특성을 추가할 경우, load balance나 horizontal scale에 의한 여러 서버들이 추가되고, performance 자체는 조금 내려갈 수 있음. 
+
 A service is **scalable** if it results in increased **performance** in a manner proportional to resources added. Generally, increasing performance means serving more units of work, but it can also be to handle larger units of work, such as when datasets grow.<sup><a href=http://www.allthingsdistributed.com/2006/03/a_word_on_scalability.html>1</a></sup>
 
 Another way to look at performance vs scalability:
@@ -425,9 +427,15 @@ Another way to look at performance vs scalability:
 
 ## Latency vs throughput
 
-**Latency** is the time to perform some action or to produce some result.
+얼핏 생각하면 latency / throughput은 서로 inverse proportional 관계라고 생각 할 수 있으나, 이는 사실이 아님. 
 
-**Throughput** is the number of such actions or results per unit of time.
+**Latency** is the time to perform some action or to produce some result. Real-time processing이 low latency를 낼 수 있음. 
+
+**Throughput** is the number of such actions or results per unit of time. Batch processing이 high throughput을 낼 수 있음. 
+
+High throughput / High latency: batch processing을 수행하는 시스템은 batch가 찰때까지 데이터를 모아두고, 다 차면 한번에 데이터 처리를 수행함. 이때, input이 들어간 시간과 출력이 나온 시간은 길어질 수 밖에 없음 (high latency). 그러나 throughput의 관점에서는 batch processing에 드는 시간이 적게 들기 때문에, high throughput이 되는것. 
+
+Low throughput / low latency: 시스템이 입력을 받는 즉시 데이터를 처리한다고 생각할 경우에는, latency가 낮다. 하지만, 많은 데이터가 들어올 경우, 모든 데이터의 처리에 시간이 걸릴 수 있기 때문에, throughput이 낮아질 수 있게 됨.  
 
 Generally, you should aim for **maximal throughput** with **acceptable latency**.
 
@@ -489,6 +497,8 @@ After a write, reads may or may not see it.  A best effort approach is taken.
 
 This approach is seen in systems such as memcached.  Weak consistency works well in real time use cases such as VoIP, video chat, and realtime multiplayer games.  For example, if you are on a phone call and lose reception for a few seconds, when you regain connection you do not hear what was spoken during connection loss.
 
+Real-time response가 중요한 어플리케이션의 경우 (VoIP, video chat, and realtime multiplayer games), 모든 유저, 모든 노드가 동일한 최신 정보를 본다는 의미의 consistency를 살짝 희생해서  real-time response를 구현한다. Strong consistency를 유지하기 위해서는 몇몇 노드나 유저의 연결이 불안정하거나 멈췄을 경우, 다른 유저들의 write connection을 중단해야 한다. 그래야 새로운 정보가 전송되지 못하는 노드/유저와 나머지간에 동일한 정보를 유지할 수 있으니까. 그런데, 이렇게 고의로 멈춰버리게 되면, real-time response가 불가능하게 되고, 유저들은 시스템이 제대로 동작하지 못한다는 인상을 받게 될 것이다. 따라서, 연결이 불안정한 유저가 있다고 해도, 나머지 유저들의 read/write까지 멈추지 말고, 그냥 missing data는 skip하는 식으로 진행하면, real-time의 효과를 낼 수 있음. 
+
 ### Eventual consistency
 
 After a write, reads will eventually see it (typically within milliseconds).  Data is replicated asynchronously.
@@ -508,6 +518,7 @@ This approach is seen in file systems and RDBMSes.  Strong consistency works wel
 ## Availability patterns
 
 There are two complementary patterns to support high availability: **fail-over** and **replication**.
+Fail-over는 다운된 노드 트래픽을 바로 active 노드로 보내는 것이고, replication은 데이터를 여러곳에 복사해 두어서 다운된 노드가 생겨도 다른 노드에서 바로 동일한 작업을 수행 할 수 있게 하는것임. 
 
 ### Fail-over
 
