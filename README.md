@@ -518,7 +518,7 @@ This approach is seen in file systems and RDBMSes.  Strong consistency works wel
 ## Availability patterns
 
 There are two complementary patterns to support high availability: **fail-over** and **replication**.
-Fail-over는 다운된 노드 트래픽을 바로 active 노드로 보내는 것이고, replication은 데이터를 여러곳에 복사해 두어서 다운된 노드가 생겨도 다른 노드에서 바로 동일한 작업을 수행 할 수 있게 하는것임. 
+Fail-over는 다운된 노드 트래픽을 바로 active 노드로 보내는 것이고, replication은 데이터를 여러곳에 복사해 두어서 다운된 노드가 생겨도 다른 노드에서 바로 동일한 작업을 수행 할 수 있게 하는것임. 둘 중 하나만을 골라서 사용해야 하는 개념은 아니고, 서로 같이 사용될 수도 있다. 
 
 ### Fail-over
 
@@ -653,12 +653,13 @@ Serving content from CDNs can significantly improve performance in two ways:
 
 ### Push CDNs
 
-Push CDNs receive new content whenever changes occur on your server.  You take full responsibility for providing content, uploading directly to the CDN and rewriting URLs to point to the CDN.  You can configure when content expires and when it is updated.  Content is uploaded only when it is new or changed, minimizing traffic, but maximizing storage.
+데이터 보유자가 명시적으로 어떤 파일을 CDN에 올릴지 결정한다. 사용자가 통제할 수 있는 영역이 넓음. update freqency가 낮은 데이터에 유리함. software update같은 사용처에 적합. Push CDNs receive new content whenever changes occur on your server.  You take full responsibility for providing content, uploading directly to the CDN and rewriting URLs to point to the CDN.  You can configure when content expires and when it is updated.  Content is uploaded only when it is new or changed, minimizing traffic, but maximizing storage.
 
 Sites with a small amount of traffic or sites with content that isn't often updated work well with push CDNs.  Content is placed on the CDNs once, instead of being re-pulled at regular intervals.
 
 ### Pull CDNs
 
+CDN이 자동적으로 데이터에 업데이트가 있는지를 확인하고, 있으면 자동으로 업데이트 시킴. data의 update가 자주 일어나야 하는 dynamic content (웹페이지) 같은 환경에서 사용하기 좋음. 
 Pull CDNs grab new content from your server when the first user requests the content.  You leave the content on your server and rewrite URLs to point to the CDN.  This results in a slower request until the content is cached on the CDN.
 
 A [time-to-live (TTL)](https://en.wikipedia.org/wiki/Time_to_live) determines how long content is cached.  Pull CDNs minimize storage space on the CDN, but can create redundant traffic if files expire and are pulled before they have actually changed.
@@ -669,7 +670,7 @@ Sites with heavy traffic work well with pull CDNs, as traffic is spread out more
 
 * CDN costs could be significant depending on traffic, although this should be weighed with additional costs you would incur not using a CDN.
 * Content might be stale if it is updated before the TTL expires it.
-* CDNs require changing URLs for static content to point to the CDN.
+* CDNs require changing URLs for static content to point to the CDN. 내 홈페이지에 있는 그림파일이 로딩되기 위해서는 해당 그림이 저장된 경로를 적어두어야 한다. 이때, 해당 경로는 내 원본 서버가 아니라, CDN상의 경로여야지 로딩 시간 단축이 가능함. 이렇게 그림의 경로를 CDN으로 바꿔야 한다는 소리를 하는듯. 
 
 ### Source(s) and further reading
 
