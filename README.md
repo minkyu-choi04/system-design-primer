@@ -1608,7 +1608,20 @@ Security is a broad topic.  Unless you have considerable experience, a security 
 * Use parameterized queries to prevent SQL injection.
 * Use the principle of [least privilege](https://en.wikipedia.org/wiki/Principle_of_least_privilege).
 
-## Messaging & Pub-sub
+## Messaging & Communication System
+
+크게 두가지 방식으로 나뉠 수 있음. 
+- Even-driven system: system components들이 event에 반응함. event를 생성하는 publisher와 받아들이는 subscriber가 분리되어있어서, asynchronous 시스템이 됨. 그래서 failure tolerant함 (하나의 모듈이 망가져도 다른 전체 시스템에 미치는 영향이 제한적).
+  - Real-time 처리가 중요한 financial service, IoT device, monitoring에 적합함.
+  - Pub-sub, messaging queue, streaming들이 event-driven 시스템 구현을 위해 사용 될 수 있음. 
+- Request-driven / Polling-based system: system component들 간의 통신이 request-response에 기반하여 이루어 짐, Synchronous communication. component들이 다른 모듈에 update가 있는지 정기적으로 체크를 함 (polling).
+  - workload가 consistent 하고 predictable한 작업에 더 적합함. Batch processing / scheduled job. 
+
+Efficiency: EDS가 더 효율적임. 이벤트가 있을때만 연산량을 소모하는데, Request-driven system은 정기적으로 polling을 해야해서 연산량 소모가 심함. 
+Complexity: EDS가 asynchronous 해서 좀 더 복잡함. 
+Real-time response: EDS는 메세지가 생성되는 즉시 처리해서 real-time인데, request-driven 모델은 polling이 일어나기까지 기다려야 해서 좀 delay가 생길 수 있음.
+
+### Pub-sub
 
 Large-scale and distributed system을 만들 때, sub-module들은 network로 연결이 되어있고, 이 네트워크 연결은 종종 끊어지고 system failure를 만들게 된다. 이것을 방지하기 위해서 publisher-subscriber messaging system을 사용한다. 
 
@@ -1618,7 +1631,7 @@ Publisher/subscriber messaging, or pub/sub messaging, is a form of asynchronous 
 
 가장 유명하고 잘 쓰이는 messaging system으로는, Request-Response Architecture이 있다. 이것은 client가 request를 서버에 보내면, 서버는 response를 보내주는 방식이다. 문제는 network로 연결된 distributed system이 복잡해져서 여러 단계를 거치게 되면서 나타난다. 하나의 stage에서 messaging에 문제가 생기면, 다른 stage에 문제가 될 수 있음 (no fault tolerant). 
 
-이를 방지하는것이 even-driven architecture이다. 이것에는 크게 세가지 요소가 있는데, producer (publisher) / router (Broker) / consumer (subscriber) 이다. 이 방법은 producer service를 consumer service와 분리를 해서 전체 시스템의 scalability를 올라가게 한다. 
+이를 방지하는것이 even-driven architecture이다. 이것에는 크게 세가지 요소가 있는데, producer (publisher) / router (Broker) / consumer (subscriber) 이다. 이 방법은 producer service를 consumer service와 분리를 해서 전체 시스템의 scalability를 올라가게 한다. One publisher is broadcasted to multiple subscribers.
 
 장점: 
 - scalability
@@ -1628,7 +1641,18 @@ Publisher/subscriber messaging, or pub/sub messaging, is a form of asynchronous 
 단점
 - unidirectional communication, no guerantee
 - lack of messaging ordering
-- 
+
+### Message Queues
+
+- Pub-sub과 비슷, 그러나 one-to-one connection. 
+- Decouple processes by providing temporal buffer that stores message (data or instruction).
+- Asynchronous communication.
+
+### Streaming
+
+- Connection is kept established.
+- Large data transmission in real time.
+- Continuous data flow. 
 
 ### Source(s) and further reading
 
