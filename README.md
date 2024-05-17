@@ -1233,7 +1233,9 @@ Whenever you query the database, hash the query as a key and store the result to
 
 ### Caching at the object level
 
-See your data as an object, similar to what you do with your application code.  Have your application assemble the dataset from the database into a class instance or a data structure(s):
+See your data as an object, similar to what you do with your application code.  
+예를들어 특정 user의 데이터에서 email address를 요청 받았다면, 해당 유저의 데이터가 저장된 object (class로 구현된 유저 데이터의 instance) 전체를 저장하게 되는것임. 어차피 관련된 정보를 쓸 확률이 높기때문에, 그냥 cache에 올려두는것 같음. 
+Have your application assemble the dataset from the database into a class instance or a data structure(s):
 
 * Remove the object from cache if its underlying data has changed
 * Allows for asynchronous processing: workers assemble objects by consuming the latest cached object
@@ -1378,7 +1380,7 @@ Refresh-ahead can result in reduced latency vs read-through if the cache can acc
   <i><a href=http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer>Source: Intro to architecting systems for scale</a></i>
 </p>
 
-Asynchronous workflows help reduce request times for expensive operations that would otherwise be performed in-line.  They can also help by doing time-consuming work in advance, such as periodic aggregation of data.
+Asynchronous workflows help reduce request times for expensive operations that would otherwise be performed in series.  They can also help by doing time-consuming work in advance, such as periodic aggregation of data.
 
 ### Message queues
 
