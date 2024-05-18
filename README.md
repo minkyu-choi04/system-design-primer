@@ -1171,6 +1171,11 @@ Sample data well-suited for NoSQL:
 * Frequently accessed ('hot') tables
 * Metadata/lookup tables
 
+Consistency
+- SQL은 ACID에 의해서 consistency가 보장됨, noSQL은 BASE에서 eventual consisntency. 은행이나 금융 관련 어플같이 consistency가 중요한 경우엔 SQL을 쓰는게 좋음, 그러나 scalability가 좀 제한된다는 단점이 있음. noSQL은 consistency는 좀 낮아도 scaling이 쉬움. 
+
+Scalability
+- 일반적으로 SQL에 비해서 noSQL이 더 큰 데이터를, 분산해서 저장하는데 더 좋다고 함. multi-server / cloud 환경에 저장할때, noSQL은 쉽게 되는데, SQL은 좀 더 복잡한 sharding이나 federation을 써야 한다고 함. 
 
 ##### Database Indexing
 
