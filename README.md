@@ -1038,7 +1038,9 @@ NoSQL is a collection of data items represented in a **key-value store**, **docu
 * **Soft state** - the state of the system may change over time, even without input. 예들들어, cache expire가 발생하면, state가 바뀔 수 있음. 또는 background job에 의해서도 바뀔 수 있음. 이와같은 차이는 SQL database의 ACID의 durability와 다른점인데, nonSQL은 memory에 저장되어 cache에 사용될 수 있다는 점에서 차이가 나는 것 같음 (nonSQL도 HDD에 저장 될 수 있음).
 * **Eventual consistency** - the system will become consistent over a period of time, given that the system doesn't receive input during that period.
 
-In addition to choosing between [SQL or NoSQL](#sql-or-nosql), it is helpful to understand which type of NoSQL database best fits your use case(s).  We'll review **key-value stores**, **document stores**, **wide column stores**, and **graph databases** in the next section.
+In addition to choosing between [SQL or NoSQL](#sql-or-nosql), it is helpful to understand which type of NoSQL database best fits your use case(s).  We'll review **key-value stores**, **document stores**, **wide column stores**, **object stores**, and **graph databases** in the next section.
+
+위에 언급된대로, noSQL은 document stores, key-value stores, object stores를 포함한다. 
 
 #### Key-value store
 
@@ -1075,6 +1077,11 @@ Document stores provide high flexibility and are often used for working with occ
 * [MongoDB architecture](https://www.mongodb.com/mongodb-architecture)
 * [CouchDB architecture](https://blog.couchdb.org/2016/08/01/couchdb-2-0-architecture/)
 * [Elasticsearch architecture](https://www.elastic.co/blog/found-elasticsearch-from-the-bottom-up)
+
+#### Object store
+An object store is a storage architecture that manages data as objects rather than as files or blocks. Each object includes the data itself, a variable amount of metadata, and a globally unique identifier. 다음과 같은 특성들을 가짐. (정확하게 이해를 못함. 대충 scalable한 noSQL 데이터 저장 수단이라고 생각하면 될것.)
+- Flat name space (no hierarchical structures), highly scalable.
+- 
 
 #### Wide column store
 
