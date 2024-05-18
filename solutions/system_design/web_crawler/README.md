@@ -75,13 +75,23 @@ Handy conversion guide:
 
 > Dive into details for each core component.
 
+위 그림에서 
+- Reverse Index Service: reverse index는 특정 word를 포함하는 document들을 indexing 해 둔것임. 예를들어 word "apple"을 포함하는 문서들이 1, 30, 245번 문서라면, 이 문서 index들을 word apple과 연결시켜 저장하는것임. index['apple'] = [1, 30, 245] 식으로.
+- Document Servkce: 해당 문서의 text에서 static title, snippet을 생성. 대강 text를 다루고 저장한다고 생각하면 될것. 구글 검색 결과에 나오는 title과 snippet을 생각하면 될것임. 
+- Queue를 쓰는 이유는, asynchronous work을 위해서 그런듯. 
+
 ### Use case: Service crawls a list of urls
 
 We'll assume we have an initial list of `links_to_crawl` ranked initially based on overall site popularity.  If this is not a reasonable assumption, we can seed the crawler with popular sites that link to outside content such as [Yahoo](https://www.yahoo.com/), [DMOZ](http://www.dmoz.org/), etc.
 
+`links_to_crawl`은 단순히 url만 저장하는게 아니라, 여러가지 정보를 저장함. 
+- Prioirty or rank: 얼마나 중요한 사이트인지, 얼마나 자주 refresh 해야하는지
+- timestamp: 언제 해당 url이 추가되었는지 / 언제 crawling schedule이 되어야 하는지
+- source data: 어디서 해당 url이 발견되었는지. 이게 analizying에 필요하다고 함. 
+
 We'll use a table `crawled_links` to store processed links and their page signatures.
 
-We could store `links_to_crawl` and `crawled_links` in a key-value **NoSQL Database**.  For the ranked links in `links_to_crawl`, we could use [Redis](https://redis.io/) with sorted sets to maintain a ranking of page links.  We should discuss the [use cases and tradeoffs between choosing SQL or NoSQL](https://github.com/donnemartin/system-design-primer#sql-or-nosql).
+We could store `links_to_crawl` and `crawled_links` in a key-value **NoSQL Database**.  For the ranked links in `links_to_crawl`, we could use [Redis](https://redis.io/) with sorted sets to maintain a ranking of page links.  We should discuss the [use cases and tradeoffs between choosing SQL or NoSQL](https://github.com/donnemartin/system-design-primer#sql-or-nosql). 주된 이유로는, 데이터가 크다는것이 있음. SQL보다 scaling이 편하고 속도가 빠른 noSQL을 사용함. 그리고 sorted set을 제공해서 rank에 대해서 sort를 쉽게 할 수 있다는 장점도 있음. 
 
 * The **Crawler Service** processes each page link by doing the following in a loop:
     * Takes the top ranked page link to crawl
@@ -283,6 +293,7 @@ Some searches are very popular, while others are only executed once.  Popular qu
 Below are a few other optimizations to the **Crawling Service**:
 
 * To handle the data size and request load, the **Reverse Index Service** and **Document Service** will likely need to make heavy use sharding and federation.
+     - Sharding / federation은 SQL에만 적용되는게 아니라 noSQL에도 적용됨. 
 * DNS lookup can be a bottleneck, the **Crawler Service** can keep its own DNS lookup that is refreshed periodically
 * The **Crawler Service** can improve performance and reduce memory usage by keeping many open connections at a time, referred to as [connection pooling](https://en.wikipedia.org/wiki/Connection_pool)
     * Switching to [UDP](https://github.com/donnemartin/system-design-primer#user-datagram-protocol-udp) could also boost performance
