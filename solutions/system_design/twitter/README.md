@@ -1,5 +1,7 @@
 # Design the Twitter timeline and search
 
+필요한 function에 따라서 상응하는 특화 모듈을 만들어 추가하면 되는것 같음. 다음의 비디오와 같이 볼것. [video](https://www.youtube.com/watch?v=Nfa-uUHuFHg&list=PL5q3E8eRUieWtYLmRU3z94-vGRcwKr9tM&index=1&ab_channel=HelloInterview-TechInterviewPreparation)
+
 *Note: This document links directly to relevant areas found in the [system design topics](https://github.com/donnemartin/system-design-primer#index-of-system-design-topics) to avoid duplication.  Refer to the linked content for general talking points, tradeoffs, and alternatives.*
 
 **Design the Facebook feed** and **Design Facebook search** are similar questions.
@@ -15,6 +17,15 @@ Without an interviewer to address clarifying questions, we'll define some use ca
 ### Use cases
 
 #### We'll scope the problem to handle only the following use cases
+
+Request의 주체로 크개 두가지로 나눌 수 있음.
+- 사람:
+  - 읽기 (User timeline, Home timeline)
+  - 쓰기
+  - following add/remove
+  - search
+- 서비스
+  - notification
 
 * **User** posts a tweet
     * **Service** pushes tweets to followers, sending push notifications and emails
