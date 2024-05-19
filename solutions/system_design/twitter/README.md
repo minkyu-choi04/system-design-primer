@@ -65,6 +65,8 @@ Search
 **Clarify with your interviewer if you should run back-of-the-envelope usage calculations.**
 
 * Size per tweet:
+    * single char (ASCII) - 1 byte
+    * Emojis - 4 bytes
     * `tweet_id` - 8 bytes
     * `user_id` - 32 bytes
     * `text` - 140 bytes
