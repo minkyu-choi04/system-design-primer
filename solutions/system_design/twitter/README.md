@@ -136,6 +136,7 @@ We could store media such as photos or videos on an **Object Store**.
     * Stores the tweet in the *home timeline of the user's followers* in a **Memory Cache**
         * O(n) operation:  1,000 followers = 1,000 lookups and inserts
     * Stores the tweet in the **Search Index Service** to enable fast searching
+      * 간단하게 생각하면, tweet post시에 나중에 해당 tweet을 빠르게 찾기 위해서 reverse indexing을 만들거나 hashtag indexing을 수행한다고 보면 됨. 
     * Stores media in the **Object Store**
     * Uses the **Notification Service** to send out push notifications to followers:
         * Uses a **Queue** (not pictured) to asynchronously send out notifications
@@ -181,7 +182,9 @@ For internal communications, we could use [Remote Procedure Calls](https://githu
 * The **Read API** server contacts the **Timeline Service**, which does the following:
     * Gets the timeline data stored in the **Memory Cache**, containing tweet ids and user ids - O(1)
     * Queries the **Tweet Info Service** with a [multiget](http://redis.io/commands/mget) to obtain additional info about the tweet ids - O(n)
+      * Tweet에 대한 추가적인 정보 (like, retweet, reply counts, has any attached media)가 필요함. 이런 정보는 tweet id에 저장되는게 아니라 따로 저장되는듯. 
     * Queries the **User Info Service** with a multiget to obtain additional info about the user ids - O(n)
+      * home timeline에 들어갈 tweet을 작성한 유저들의 추가적인 정보 (프로필, 유저 사진, 등등)이 필요함. 
 
 REST API:
 
