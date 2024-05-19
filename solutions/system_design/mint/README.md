@@ -86,6 +86,11 @@ Handy conversion guide:
 
 > Dive into details for each core component.
 
+- SQL: 고객이 제공한 account info를 저장. 
+- Object Store: Transaction Extaction Service가 은행에서 받아온 transaction 정보들을 저장.
+- Account API: 관련된 작업을 총괄하는 모듈. Handle account connection to bank, update and keep account info, trigger and schedule update jobs, security and authentication.
+- Transaction Extraction Service: Account API에서 호출을 받고, 실제로 bank와 통신하여 데이터를 가져옴.  
+
 ### Use case: User connects to a financial account
 
 We could store info on the 10 million users in a [relational database](https://github.com/donnemartin/system-design-primer#relational-database-management-system-rdbms).  We should discuss the [use cases and tradeoffs between choosing SQL or NoSQL](https://github.com/donnemartin/system-design-primer#sql-or-nosql).
@@ -131,6 +136,8 @@ We'll want to extract information from an account in these cases:
 * The user first links the account
 * The user manually refreshes the account
 * Automatically each day for users who have been active in the past 30 days
+
+여기서 보면, client (고객)의 request가 있을 때 (user first link account, manually refresh account) account API가 호출되고, 명시적인 user request가 없어도, 자동적으로 account API가 호출될 수 있는듯. 실제 financial institution에서 정보를 가져오는건 Transaction Extraction Service 모듈이고, Account API는 
 
 Data flow:
 
