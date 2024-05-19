@@ -223,7 +223,7 @@ Response
 
 #### 5. Search
 ```
-GET /api/v1.0/search
+GET /api/v1.0/search?query=hello
 ```
 
 Response
