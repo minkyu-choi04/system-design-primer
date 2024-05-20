@@ -850,6 +850,26 @@ Data splitting (sharding / federation) and Data replication (master-slave replic
 - Data replication / splittion 모두 load-balancer를 요구함. replicated setting에서는 client의 request를 균등하게 각 node로 분배하는 역할을 하고, 특히 write operation의 경우에는 sync를 맞추는것도 수행해야 함. splitted setting에서는  client의 request가 요구하는 데이터가 어디에 있는지를 기억하고 해당 node로 request를 direct하는 역할을 주로 수행함.
 
 
+**비교**
+- Data structure:
+  - tabular, well-defined relationship: SQL > noSQL
+  - Hierarchical, dynamic, unstructured data: SQL < noSQL
+- Scalability
+  - Vertical scaling: SQL > noSQL. CAP에서 SQL은 SL에 집중을 하는데, 이 말은 consistency를 중요하게 본다는것이고, distributed sysytem으로 확장시에 consistency를 유지하기 위해 추가적인 수단이 필요하다는 의미임.
+  - Horizontal scaling: SQL < noSQL. distributed system으로의 확장성은 noSQL이 더 좋음.
+- Consistency / reliability
+  - strong consistency and ACID (Atomicity, Consistency, Isolation, Durability) properties: SQL > noSQL
+  - prioritize Availability and Partition Tolerance over Consistency: SQL < noSQL
+- Query complexity and frequency
+  - Complex querying: SQL > noSQL. 복잡한 querying을 더 잘 지원함 (filtering, sorting, grouping, joining)
+  - Simple lookups or updates: SQL < noSQL
+- Performance and latency
+  - high write loads, large-scale data storage: SQL < noSQL
+  - General-purpose performance: SQL > noSQL
+ 
+[source](https://medium.com/geekculture/choosing-the-right-database-for-system-design-sql-vs-nosql-and-beyond-d58fde5a6fe3)
+
+
 ### Relational database management system (RDBMS)
 
 A relational database like SQL is a collection of data items organized in tables.
