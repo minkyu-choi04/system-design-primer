@@ -1,5 +1,42 @@
 # Design a web crawler
 
+2024.05.20. 이전에 있던 내용은 crawler을 디자인 하는게 너무 부실했었음. crawler를 단 하나의 module로 표기만 하고, 세부적인것을 구현해 두지 않았었음. 그래서 다른 자료를 보는게 나을것. 
+- https://www.enjoyalgorithms.com/blog/web-crawler
+
+## Step 1: Requireemtns / Functions
+
+### Functions
+- Given a set of URLs, visit the URL and store the web page.
+- Extract URLs from the visited pates.
+- Append new extracted URLs to the list of URLs to visit
+
+### Requirements
+- Crawler should be scalable with bilions of pages.
+- Crawler should not make too many request to webpages.
+- Avoid cycle
+
+### Estimation
+- 1B webpages to be crawled per month.
+  - Average number of queries per second (QPS) is 400 pages/s = 1*10^9 / 30 / 24 / 60 / 60
+- Peak value of queries per second is around twice: 800 pages/s
+- Average webpage is 500kb --> storage per month = 10^9 * 500k = 500TB
+
+## Step 2. Main Design
+
+- Seed URLs: 처음에 crawling 시작하는 set of urls. 여기서 시작해서 방문하는 페이지에서 링크된 주소들을 계속 추가해 나가면서 방문 범위를 넓힘. 
+- URL frontier: See url에서 시작해서 다음의 방문 페이지를 결정. DFS가 보통 쓰이고, DFS도 쓰일 수 있음. importance를 반영해서 priority queue로 쓸 수 있음.
+- HTML fetcher: Download webpages from the given URL from URL frontier.
+- DNS Resolver: 웹페이지가 다운되기 전에 URL이 IP 주소로 변환되어야 하나봄.
+- HTML parser: 웹페이지를 다운받으면, HTML 형식인데, 여기서 메인 텍스트만 뽑아냄. 적절하지 않는 내용을 걸러내기도 함.
+- Duplicate detection: 다운받은 페이지가 중복되는지를 확인. MD5 hashing을 사용해서 동일한 hash key가 이미 저장되었는지 확인.
+- Data storage: Parse된 text를 저장. offline 저장 용도로 쓰일거면 낮은 가격의 높은 볼륨 저장장치 사용, 온라인 search로 쓸거면 large-scale distributed system (noSQL) 같은곳에 저장.
+- Cache: 최근에 방문된 url을 저장. 나중에 여기를 보고 중복을 피함.
+- URL extractor: 페이지 내에서 링크된 url을 찾음.
+- URL filter: 잘못되거나 좋지 않은 url 제거.
+- URL detector: 이전에 방문한 url인지 학인하고 제거.
+- URL storage: 이전에 방문한 모든 URL을 저장. 
+
+
 *Note: This document links directly to relevant areas found in the [system design topics](https://github.com/donnemartin/system-design-primer#index-of-system-design-topics) to avoid duplication.  Refer to the linked content for general talking points, tradeoffs, and alternatives.*
 
 ## Step 1: Outline use cases and constraints
@@ -45,6 +82,8 @@ Without an interviewer to address clarifying questions, we'll define some use ca
     * Average stored size per web page: 500 KB
         * For simplicity, count changes the same as new pages
 * 100 billion searches per month
+* Robot.txt 규정 준수
+* Multi-thread or workers are needed. 
 
 Exercise the use of more traditional systems - don't use existing systems such as [solr](http://lucene.apache.org/solr/) or [nutch](http://nutch.apache.org/).
 
@@ -78,7 +117,10 @@ Handy conversion guide:
 위 그림에서 
 - Reverse Index Service: reverse index는 특정 word를 포함하는 document들을 indexing 해 둔것임. 예를들어 word "apple"을 포함하는 문서들이 1, 30, 245번 문서라면, 이 문서 index들을 word apple과 연결시켜 저장하는것임. index['apple'] = [1, 30, 245] 식으로.
 - Document Servkce: 해당 문서의 text에서 static title, snippet을 생성. 대강 text를 다루고 저장한다고 생각하면 될것. 구글 검색 결과에 나오는 title과 snippet을 생각하면 될것임. 
-- Queue를 쓰는 이유는, asynchronous work을 위해서 그런듯. 
+- Queue를 쓰는 이유는, asynchronous work을 위해서 그런듯.
+
+어떤 데이터를 저장?
+- crawler가 webpage를 방문하면, title, text, metadata 정도를 추출해서 저장하는데, 이것은 real-time search를 위해서 noSQL에 바로 저장을 한다. object store에 저장을 하면 너무 느려서 real time search가 안된다고 함. 
 
 ### Use case: Service crawls a list of urls
 
@@ -295,6 +337,7 @@ Below are a few other optimizations to the **Crawling Service**:
 * To handle the data size and request load, the **Reverse Index Service** and **Document Service** will likely need to make heavy use sharding and federation.
      - Sharding / federation은 SQL에만 적용되는게 아니라 noSQL에도 적용됨. 
 * DNS lookup can be a bottleneck, the **Crawler Service** can keep its own DNS lookup that is refreshed periodically
+  * DNS가 보통 느리다고 함. 그래서 customized DNS를 만들어서 사용하는게 편하대. Cache같은 개념으로 ip-domain을 연결하는데, 주기적으로 refreshed 되어야 함. 
 * The **Crawler Service** can improve performance and reduce memory usage by keeping many open connections at a time, referred to as [connection pooling](https://en.wikipedia.org/wiki/Connection_pool)
     * Switching to [UDP](https://github.com/donnemartin/system-design-primer#user-datagram-protocol-udp) could also boost performance
 * Web crawling is bandwidth intensive, ensure there is enough bandwidth to sustain high throughput
