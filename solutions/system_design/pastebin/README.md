@@ -124,8 +124,11 @@ To generate the unique url, we could:
     * MD5 is a widely used hashing function that produces a 128-bit hash value
     * MD5 is uniformly distributed
     * Alternatively, we could also take the MD5 hash of randomly-generated data
+    * Good: MD5 is simple and fast
+    * Bad: Collision vulnerability (more hash collision?), predictability.
+    * Thinking of other hash function including randomness would be better for security. 
 * [**Base 62**](https://www.kerstner.at/2012/07/shortening-strings-using-base-62-encoding/) encode the MD5 hash
-    * Base 62 encodes to `[a-zA-Z0-9]` which works well for urls, eliminating the need for escaping special characters
+    * Base 62 encodes to `[a-zA-Z0-9]` which works well for urls, eliminating the need for escaping special characters - lower case, upper case, number 모두 합하면 62개가 됨. 그래서 base 62로 encoding을 하면, 결과가 알파벳 (lower + upper case) + number의 조합으로 만들 수 있게 되어서 좋음.
     * There is only one hash result for the original input and Base 62 is deterministic (no randomness involved)
     * Base 64 is another popular encoding but provides issues for urls because of the additional `+` and `/` characters
     * The following [Base 62 pseudocode](http://stackoverflow.com/questions/742013/how-to-code-a-url-shortener) runs in O(k) time where k is the number of digits = 7:
