@@ -373,7 +373,15 @@ We should also consider moving some data to a **NoSQL Database**.
 
 ### Security
 
+- Rate-limiter
+- Encrypt
+
 Refer to the [security section](https://github.com/donnemartin/system-design-primer#security).
+
+### Avilability
+- Fail-over
+
+
 
 ### Latency numbers
 
