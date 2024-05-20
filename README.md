@@ -1605,6 +1605,15 @@ REST is focused on exposing data.  It minimizes the coupling between client/serv
 
 ### RPC and REST calls comparison
 
+- RPC (Remote procedure call)
+  - Pros: Efficiency (send less data over the network)
+  - Cons: Less scalable to web context
+- REST (representational state transfer)
+  - Pros: Scalable to large web-based application, Flexible and simple due to use of standard HTTP (straightforward).
+  - Cons: Overhead of HTTP.
+ 
+대충 비교하면, 대부분의 large-scale web based application에서는 REST가 더 적합하다. 그러나 efficiency가 요구되거나 high-performance back-end communication이 필요한 경우엔 PRC를 쓰기도 함.  
+
 | Operation | RPC | REST |
 |---|---|---|
 | Signup    | **POST** /signup | **POST** /persons |
