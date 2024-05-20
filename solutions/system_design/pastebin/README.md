@@ -85,6 +85,56 @@ Handy conversion guide:
 
 > Dive into details for each core component.
 
+
+### Design API
+
+#### - User enters a paste's URL and views the contents
+```
+GET /api/v1.0/pastes/{paste_id}
+```
+Response
+```
+{
+  "paste_id": "123abc",
+  "content": "Here is some text...",
+  "created_at": "2024-05-15T12:00:00Z",
+  "expires_at": "2024-06-15T12:00:00Z"
+}
+```
+
+#### - User enters a block of text and gets a randomly generated link
+```
+POST /api/v1.0/pastes
+```
+Request body
+```
+{
+  "content": "Here is some text that needs to be saved.",
+  "expires_in": "30 days"  // Optional, could specify when it should expire
+}
+```
+Response
+```
+{
+  "paste_id": "123abc",
+  "url": "https://pastebin.com/123abc",
+  "message": "Paste created successfully."
+}
+```
+
+#### - Service deletes the pastes, which are expired
+```
+DELETE /api/v1.0/pastes/expired
+```
+Response
+```
+{
+  "message": "Expired pastes deleted successfully."
+}
+```
+
+
+
 ### Use case: User enters a block of text and gets a randomly generated link
 
 We could use a [relational database](https://github.com/donnemartin/system-design-primer#relational-database-management-system-rdbms) as a large hash table, mapping the generated url to a file server and path containing the paste file.
