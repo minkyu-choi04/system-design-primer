@@ -1743,6 +1743,11 @@ Power           Exact Value         Approx Value        Bytes
 40              1,099,511,627,776   1 trillion (10^12)   1 TB
 ```
 
+ASCII: 1byte
+Int: 4byte
+float: 4byte
+double: 8byte
+
 #### Source(s) and further reading
 
 * [Powers of two](https://en.wikipedia.org/wiki/Power_of_two)
