@@ -1,7 +1,8 @@
 # Design a web crawler
 
 2024.05.20. 이전에 있던 내용은 crawler을 디자인 하는게 너무 부실했었음. crawler를 단 하나의 module로 표기만 하고, 세부적인것을 구현해 두지 않았었음. 그래서 다른 자료를 보는게 나을것. 
-- https://www.enjoyalgorithms.com/blog/web-crawler
+- [참고] https://www.enjoyalgorithms.com/blog/web-crawler
+- [그림/설명 여기를 볼것] https://astikanand.github.io/techblogs/high-level-system-design/design-web-crawler
 
 ## Step 1: Requireemtns / Functions
 
@@ -25,10 +26,16 @@
 
 - Seed URLs: 처음에 crawling 시작하는 set of urls. 여기서 시작해서 방문하는 페이지에서 링크된 주소들을 계속 추가해 나가면서 방문 범위를 넓힘. 
 - URL frontier: See url에서 시작해서 다음의 방문 페이지를 결정. DFS가 보통 쓰이고, DFS도 쓰일 수 있음. importance를 반영해서 priority queue로 쓸 수 있음.
+  - FIFO queue로 구현 가능. 이렇게 하면 해당 페이지가 있는 서버에 과부하를 주지 않는듯.
+  - 탐색해야 할 페이지가 많으니, multi-server, multi-thread를 사용해야 하는데, url frontier도 이를 지원해야 함.
+  - 아마 전체 서버에 대하여 하나의 url frontier가 있고, 여기서 얻은 url은 hash map을 통해서 url-->server_id/thread_it로 mapping되어서 해당 서버로 할당됨.
+  - 각 worker thread에는 이렇게 받아온 url을 저장해 두는 독립적인 sub queue가 존재.
+  - 전체 방문해야 할 페이지가 많기때문에, url frontier는 disk에 저장하는것이 바람직함. 
 - HTML fetcher: Download webpages from the given URL from URL frontier.
 - DNS Resolver: 웹페이지가 다운되기 전에 URL이 IP 주소로 변환되어야 하나봄.
 - HTML parser: 웹페이지를 다운받으면, HTML 형식인데, 여기서 메인 텍스트만 뽑아냄. 적절하지 않는 내용을 걸러내기도 함.
-- Duplicate detection: 다운받은 페이지가 중복되는지를 확인. MD5 hashing을 사용해서 동일한 hash key가 이미 저장되었는지 확인.
+- Document Input Stream (DIS): 하나의 문서가 여러개의 processing module에 의해서 처리될 수 있어야 함 (url extraction, document duplication check ..). 이를 위해서 문서를 여러번 다운받지 않고도 여러 모듈에서의 접근이 가능해야 하는데, 이것을 DIS가 가능하게 함 as a cache. 정당히 작은 크기의 문서만 cache 할 수 있고, 너무 크면 backing file로 써야함. 
+- Duplicate detection: 다운받은 페이지가 중복되는지를 확인. MD5 hashing을 사용해서 동일한 hash key가 이미 저장되었는지 확인 (mirrored site)
 - Data storage: Parse된 text를 저장. offline 저장 용도로 쓰일거면 낮은 가격의 높은 볼륨 저장장치 사용, 온라인 search로 쓸거면 large-scale distributed system (noSQL) 같은곳에 저장.
 - Cache: 최근에 방문된 url을 저장. 나중에 여기를 보고 중복을 피함.
 - URL extractor: 페이지 내에서 링크된 url을 찾음.
