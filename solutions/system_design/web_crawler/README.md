@@ -1,6 +1,6 @@
 # Design a web crawler
 
-2024.05.20. 이전에 있던 내용은 crawler을 디자인 하는게 너무 부실했었음. crawler를 단 하나의 module로 표기만 하고, 세부적인것을 구현해 두지 않았었음. 그래서 다른 자료를 추가로 보는게 나을것. search engine이라는 주제와 web crawler를 동시에 봐야함. 그래서 이전에 있던 그림에서 search query 부분을 그대로 보고, web crawler 부분은 새로운 자료를 보는것이 좋을것. 
+2024.05.20. 이전에 있던 내용은 crawler을 디자인 하는게 너무 부실했었음. crawler를 단 하나의 module로 표기만 하고, 세부적인것을 구현해 두지 않았었음. 그래서 다른 자료를 추가로 보는게 나을것. search engine이라는 주제와 web crawler를 동시에 봐야함. 그래서 이전에 있던 그림에서 search query 부분을 그대로 보고, web crawler 부분은 새로운 자료를 보는것이 좋을것. Search service와 web crawler는 이전의 그림에서와 같이 queue를 통해서 이어져 있는것을 기본으로 하겠음. 
 - [참고] https://www.enjoyalgorithms.com/blog/web-crawler
 - [그림/설명 여기를 볼것] https://astikanand.github.io/techblogs/high-level-system-design/design-web-crawler
 
