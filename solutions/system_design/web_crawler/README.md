@@ -4,6 +4,9 @@
 - [참고] https://www.enjoyalgorithms.com/blog/web-crawler
 - [그림/설명 여기를 볼것] https://astikanand.github.io/techblogs/high-level-system-design/design-web-crawler
 
+Search / crawler 통합된 그림. 정확하진 않을것. 
+![my drawing](./crawler_total.png)
+
 ## Step 1: Requireemtns / Functions
 
 ### Functions
