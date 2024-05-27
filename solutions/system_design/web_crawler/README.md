@@ -32,7 +32,7 @@
   - 각 worker thread에는 이렇게 받아온 url을 저장해 두는 독립적인 sub queue가 존재.
   - 전체 방문해야 할 페이지가 많기때문에, url frontier는 disk에 저장하는것이 바람직함. 
 - HTML fetcher: Download webpages from the given URL from URL frontier.
-- DNS Resolver: 웹페이지가 다운되기 전에 URL이 IP 주소로 변환되어야 하나봄.
+- DNS Resolver: 웹페이지가 다운되기 전에 URL이 IP 주소로 변환되어야 하나봄. 이게 DNS의 역할임. domain name을 ip address로 변환하는게 DNS가 하는 일인데, 이 변환 속도가 bottleneck이 되어서 전체 시스템의 속도를 느리게 할 수 있음. 그래서 custom DNS를 쓰기도 함. 
 - HTML parser: 웹페이지를 다운받으면, HTML 형식인데, 여기서 메인 텍스트만 뽑아냄. 적절하지 않는 내용을 걸러내기도 함.
 - Document Input Stream (DIS): 하나의 문서가 여러개의 processing module에 의해서 처리될 수 있어야 함 (url extraction, document duplication check ..). 이를 위해서 문서를 여러번 다운받지 않고도 여러 모듈에서의 접근이 가능해야 하는데, 이것을 DIS가 가능하게 함 as a cache. 정당히 작은 크기의 문서만 cache 할 수 있고, 너무 크면 backing file로 써야함. 
 - Duplicate detection: 다운받은 페이지가 중복되는지를 확인. MD5 hashing을 사용해서 동일한 hash key가 이미 저장되었는지 확인 (mirrored site)
