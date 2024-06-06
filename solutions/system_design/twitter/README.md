@@ -118,7 +118,7 @@ Handy conversion guide:
 
 두가지 timeline 종류가 있음. 
 - User timeline: 개별 유저가 올린 tweet들만 모아서 볼 수 있음. Tweeter에서 특정 유저의 아이디를 눌러서 들어가면 그 사람이 쓴 tweet들만 보이는 기능.
-   - SQL을 사용. user timeline은 home timeline에 비해서 상대적으로 write 수가 적음. 유저들이 tweet을 올리면, userID, tweetID같은 정보들을 시간순으로 그냥 SQL에 저장하면 됨. 그리고 SQL은 ACID에서 consistency가 중요하게 작용함. 유저 timeline에서는 데이터를 놓치지 않고 전달하는것이 중요함. 특정 유저에 대한 user timeline이 필요할 경우, SQL에서 미리 indexing 해 놓은 userID를 이용해서 해당 유저에 대한 tweet만 빠르게 반환 할 수 있음. 
+   - SQL을 사용. user timeline은 home timeline에 비해서 상대적으로 write 수가 적음. 유저들이 tweet을 올리면, userID, tweetID같은 정보들을 시간순으로 그냥 SQL에 저장하면 됨. 그리고 SQL은 ACID에서 consistency가 중요하게 작용함. 유저 timeline에서는 데이터를 놓치지 않고 전달하는것이 중요함. 특정 유저에 대한 user timeline이 필요할 경우, SQL에서 미리 indexing 해 놓은 userID를 이용해서 해당 유저에 대한 tweet만 빠르게 반환 할 수 있음. (SQL에 바로 userID, tweetID, contents가 같이 저장됨. media file들은 따로 noSQL에 저장). 
 - Home timeline: 내가 follow하는 유저들이 올린 업데이트를 모아서 볼 수 있음.
   - home timeline은 user timeline보다 더 빠르고 많은 업데이트가 필요함 (SLQ, noSQL단위에서의 업데이트를 말하는게 아니라, timeline 레벨에서의 업데이트를 말하는것임. user timeline은 그냥 해당 유저가 포스팅을 하는 속도에만 연관되어 업데이트가 필요하지만, home timeline은 해당 유저 뿐 아니라, following 하는 모든 유저들의 속도에 영향을 받음. 그래서 더 복잡하고, scalability가 필요함, 대신 consistency는 좀 희생되어도 상관없음. 이와같은 이유로 noSQL을 사용.).
   - home timeline을 구현할 때는 개별 유저들에 대해서 그들이 following하는 유저들의 update를 모아놓은 pre-built home timeline이 존재함. 이를 위해 fan-out이 사용되는데, 이것은 새로운 post가 올라가면, 모든 following 유저들의 feed에 바로 write 되는것을 말함. user timeline에서는 이렇게 user별로 pre-built하는게 아니라, indexing을 통해서 retrival을 통해서 빠르게 정보를 얻어왔었음. 
