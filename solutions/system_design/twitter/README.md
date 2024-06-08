@@ -258,6 +258,9 @@ Response
  * Tweet Feed/Timeline
    * Type: Key-Value or Document Store
    * Data: { "user_id": "12345", "tweets": [{"tweet_id": "123", "timestamp": "2020-01-01T00:00:00Z"}, {...}] }
+ * Reverse Search Index
+   * NoSQL에 저장.
+   * DlasticSearch가 이걸 위한거라는데?
 
 
 ### Use case: User posts a tweet
