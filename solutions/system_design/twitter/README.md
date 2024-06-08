@@ -259,7 +259,8 @@ Response
    * Type: Key-Value or Document Store
    * Data: { "user_id": "12345", "tweets": [{"tweet_id": "123", "timestamp": "2020-01-01T00:00:00Z"}, {...}] }
    * home timeliine을 이렇게 저장하고, user timeline은 그냥 SQL에서 해당 user_id로 찾아서 반환하는듯.
-   * timeline 저장시에는 그냥 tweet_id만 저장하면 되는듯. home timeline에 저장된 tweet_id들을 저장해 두고, 나중에 request가 들어오면, user_info_service, tweet_info_service에서 필요한 정보를 받아와서 사용하는것 같음. 
+   * timeline 저장시에는 그냥 tweet_id만 저장하면 되는듯. home timeline에 저장된 tweet_id들을 저장해 두고, 나중에 request가 들어오면, user_info_service, tweet_info_service에서 필요한 정보를 받아와서 사용하는것 같음.
+   * 여기서 key는 user_id, value는 tweets.
  * Reverse Search Index
    * NoSQL에 저장.
    * ElasticSearch가 이걸 위한거라는데?
