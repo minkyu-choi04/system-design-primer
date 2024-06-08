@@ -421,6 +421,8 @@ The **Fanout Service** is a potential bottleneck.  Twitter users with millions o
 
 We could also avoid fanning out tweets from highly-followed users.  Instead, we could search to find tweets for highly-followed users, merge the search results with the user's home timeline results, then re-order the tweets at serve time.
 
+Highly followed user가 post를 할 경우, 해당 유저를 follow하는 무수한 follower들에 대해서 fan-out을 수행해야 하는데, 이는 시간이 너무 오래 걸린다. 그래서, 이런 유저에 대해서는, 다른 유저들과는 다르게, post시에 follower들의 home feed에 바로 저장을 하지 말고, follower들이 home feed를 보고자 할 때, highly followed user의 tweet을 검색해서 follower의 feed에 집어넣고 time에 대해서 sorting을 수행한다. 이렇게 해서 전체 시스템에 걸리는 부하를 줄일 수 있는듯. 
+
 Additional optimizations include:
 
 * Keep only several hundred tweets for each home timeline in the **Memory Cache**
