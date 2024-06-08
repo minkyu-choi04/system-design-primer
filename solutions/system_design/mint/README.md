@@ -133,6 +133,32 @@ $ curl -X POST --data '{ "user_id": "foo", "account_url": "bar", \
     "account_login": "baz", "account_password": "qux" }' \
     https://mint.com/api/v1/account
 ```
+```
+POST /api/v1/account
+```
+Request body
+```
+{
+  "user_id": "foo",
+  "account_url": "bar",
+  "account_login": "baz",
+  "account_password": "qux"
+}
+```
+Response
+```
+{
+  "status": "success",
+  "message": "Account linked successfully",
+  "data": {
+    "account_id": "12345",
+    "user_id": "foo",
+    "account_status": "active"
+  }
+}
+```
+
+
 
 For internal communications, we could use [Remote Procedure Calls](https://github.com/donnemartin/system-design-primer#remote-procedure-call-rpc).
 
