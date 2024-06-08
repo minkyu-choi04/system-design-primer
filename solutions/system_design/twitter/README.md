@@ -258,9 +258,10 @@ Response
  * Tweet Feed/Timeline
    * Type: Key-Value or Document Store
    * Data: { "user_id": "12345", "tweets": [{"tweet_id": "123", "timestamp": "2020-01-01T00:00:00Z"}, {...}] }
+   * home timeliine을 이렇게 저장하고, user timeline은 그냥 SQL에서 해당 user_id로 찾아서 반환하는듯. 
  * Reverse Search Index
    * NoSQL에 저장.
-   * DlasticSearch가 이걸 위한거라는데?
+   * ElasticSearch가 이걸 위한거라는데?
 
 
 ### Use case: User posts a tweet
