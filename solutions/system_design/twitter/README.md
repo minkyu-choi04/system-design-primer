@@ -258,7 +258,8 @@ Response
  * Tweet Feed/Timeline
    * Type: Key-Value or Document Store
    * Data: { "user_id": "12345", "tweets": [{"tweet_id": "123", "timestamp": "2020-01-01T00:00:00Z"}, {...}] }
-   * home timeliine을 이렇게 저장하고, user timeline은 그냥 SQL에서 해당 user_id로 찾아서 반환하는듯. 
+   * home timeliine을 이렇게 저장하고, user timeline은 그냥 SQL에서 해당 user_id로 찾아서 반환하는듯.
+   * timeline 저장시에는 그냥 tweet_id만 저장하면 되는듯. home timeline에 저장된 tweet_id들을 저장해 두고, 나중에 request가 들어오면, user_info_service, tweet_info_service에서 필요한 정보를 받아와서 사용하는것 같음. 
  * Reverse Search Index
    * NoSQL에 저장.
    * ElasticSearch가 이걸 위한거라는데?
@@ -287,7 +288,7 @@ We could store media such as photos or videos on an **Object Store**.
 
 **Clarify with your interviewer how much code you are expected to write**.
 
-If our **Memory Cache** is Redis, we could use a native Redis list with the following structure:
+If our **Memory Cache** is Redis, we could use a native Redis list with the following structure: (아래 코드는 home timeline을 위한 데이터가 어떻게 저장되어 있는지를 보여주는것임. 특정 유저의 home timeline에 다음과 같은 tweet_id들이 들어갈것이라는게 저장되어 있음. 
 
 ```
            tweet n+2                   tweet n+1                   tweet n
@@ -324,7 +325,7 @@ For internal communications, we could use [Remote Procedure Calls](https://githu
 * The **Client** posts a home timeline request to the **Web Server**
 * The **Web Server** forwards the request to the **Read API** server
 * The **Read API** server contacts the **Timeline Service**, which does the following:
-    * Gets the timeline data stored in the **Memory Cache**, containing tweet ids and user ids - O(1)
+    * Gets the timeline data stored in the **Memory Cache**, containing tweet ids and user ids - O(1) (twee_id같이 간단한 데이터만 받아오는거지, text, video image같은건 나중에 받아오는것임. 여기가 아니라. )
     * Queries the **Tweet Info Service** with a [multiget](http://redis.io/commands/mget) to obtain additional info about the tweet ids - O(n)
       * Tweet에 대한 추가적인 정보 (like, retweet, reply counts, has any attached media)가 필요함. 이런 정보는 tweet id에 저장되는게 아니라 따로 저장되는듯. 
     * Queries the **User Info Service** with a multiget to obtain additional info about the user ids - O(n)
