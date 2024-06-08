@@ -37,7 +37,7 @@ Search / crawler 통합된 그림. 정확하진 않을것.
 - HTML fetcher: Download webpages from the given URL from URL frontier.
 - DNS Resolver: 웹페이지가 다운되기 전에 URL이 IP 주소로 변환되어야 하나봄. 이게 DNS의 역할임. domain name을 ip address로 변환하는게 DNS가 하는 일인데, 이 변환 속도가 bottleneck이 되어서 전체 시스템의 속도를 느리게 할 수 있음. 그래서 custom DNS를 쓰기도 함. 
 - HTML parser: 웹페이지를 다운받으면, HTML 형식인데, 여기서 메인 텍스트만 뽑아냄. 적절하지 않는 내용을 걸러내기도 함.
-- Document Input Stream (DIS): 하나의 문서가 여러개의 processing module에 의해서 처리될 수 있어야 함 (url extraction, document duplication check ..). 이를 위해서 문서를 여러번 다운받지 않고도 여러 모듈에서의 접근이 가능해야 하는데, 이것을 DIS가 가능하게 함 as a cache. 정당히 작은 크기의 문서만 cache 할 수 있고, 너무 크면 backing file로 써야함. 
+- Document Input Stream (DIS): 하나의 문서가 여러개의 processing module에 의해서 처리될 수 있어야 함 (url extraction, document duplication check ..). 이를 위해서 문서를 여러번 다운받지 않고도 여러 모듈에서의 접근이 가능해야 하는데, 이것을 DIS가 가능하게 함 as a cache. 정당히 작은 크기의 문서만 cache 할 수 있고, 너무 크면 backing file로 써야함. 현재의 세팅에서는 다운받은 문서 자체를 저장하는게 아니라, title/summary만 저장한다는것을 기억해야 함. 그래서 DIS에 다운받은 페이지를 넣어두고, 다른 모듈에서 페이지의 원문을 이용해야 한다면, 여기에 접속해서 이용하고, 다 쓰면 치우는 방식으로 저장공간을 아까는듯. 
 - Duplicate detection: 다운받은 페이지가 중복되는지를 확인. MD5 hashing을 사용해서 동일한 hash key가 이미 저장되었는지 확인 (mirrored site)
 - Data storage: Parse된 text를 저장. offline 저장 용도로 쓰일거면 낮은 가격의 높은 볼륨 저장장치 사용, 온라인 search로 쓸거면 large-scale distributed system (noSQL) 같은곳에 저장.
 - Cache: 최근에 방문된 url을 저장. 나중에 여기를 보고 중복을 피함.
@@ -157,6 +157,12 @@ We could store `links_to_crawl` and `crawled_links` in a key-value **NoSQL Datab
                 * Generates the page signature
                 * Removes the link from `links_to_crawl` in the **NoSQL Database**
                 * Inserts the page link and signature to `crawled_links` in the **NoSQL Database**
+
+DB design
+- Document summary / title: noSQL, {'url': 'abcd.com', 'summary': 'asdf', 'title: 'fdsa'}, key는 url.
+- url store: noSQL: {'url': 'abcd.com', 'added_at': 'time added', 'priority': '1'}, key는 url.
+- reverse search index: {'word': 'word1', urls: ['url1', 'url2', ...]}
+
 
 **Clarify with your interviewer how much code you are expected to write**.
 
