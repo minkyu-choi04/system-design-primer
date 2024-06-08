@@ -159,9 +159,9 @@ We could store `links_to_crawl` and `crawled_links` in a key-value **NoSQL Datab
                 * Inserts the page link and signature to `crawled_links` in the **NoSQL Database**
 
 DB design
-- Document summary / title: noSQL, {'url': 'abcd.com', 'summary': 'asdf', 'title: 'fdsa'}, key는 url.
+- Document summary / title: noSQL, {'url': 'abcd.com', 'summary': 'asdf', 'title: 'fdsa'}, key는 url or ducument_id.
 - url store: noSQL: {'url': 'abcd.com', 'added_at': 'time added', 'priority': '1'}, key는 url.
-- reverse search index: {'word': 'word1', urls: ['url1', 'url2', ...]}
+- reverse search index: {'word': 'word1', urls: ['url1', 'url2', ...]}, key는 word  or ducument_id.
 
 
 **Clarify with your interviewer how much code you are expected to write**.
