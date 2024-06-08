@@ -86,8 +86,17 @@ Handy conversion guide:
 
 > Dive into details for each core component.
 
-- SQL: 고객이 제공한 account info를 저장. 
-- Object Store: Transaction Extaction Service가 은행에서 받아온 transaction 정보들을 저장.
+### DB Design
+* SQL:
+   * Account: 고객이 제공한 account info를 저장.
+   * Transaction: Bank에서 가져와서 object store에 저장한 raw transaction data에서 정보를 추출/정리해서 저장.
+     * transaction_id, created_at, seller_id, user_id, amount...
+   * Monthly spending
+     * summary of spending. 이건 transaction마다 저장된게 아니라, category, month마다 저장된 정보임. 
+     * user_id, month: July, category: food, amount: $450. 
+- Object Store: Transaction Extaction Service가 은행에서 받아온 transaction 정보들을 저장. hierarchical key를 가짐. user/date를 key로 가지고, value로 transaction_id, user_id, date, amount, category 등등을 가짐. (transactions/user1234/20230601/transaction123.json)
+
+
 - Account API: 관련된 작업을 총괄하는 모듈. Handle account connection to bank, update and keep account info, trigger and schedule update jobs, security and authentication.
 - Transaction Extraction Service: Account API에서 호출을 받고, 실제로 bank와 통신하여 데이터를 가져옴.  
 
